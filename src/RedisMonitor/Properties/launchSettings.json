@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RedisMonitor": {
+      "commandName": "RedisMonitor",
+      "commandLineArgs": "--redisendpoints \"10.100.71.158:6381,10.100.71.158:6382,10.100.71.159:6381,10.100.71.159:6382,10.100.71.160:6381,10.100.71.160:6382\" --clustername \"cache\""
+    }
+  }
+}
