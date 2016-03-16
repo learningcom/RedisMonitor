@@ -23,7 +23,7 @@ namespace RedisMonitor
                 .SetBasePath("./")
                 .Build();
 
-            _indexName = string.Format("redis-monitor-{0}", DateTime.Now.ToString("yyyy.MM.dd"));
+            _indexName = string.Format("redis-monitor-{0}", DateTime.UtcNow.ToString("yyyy.MM.dd"));
 
             var redisEndpointString = _config["redisendpoints"] + ",allowAdmin=true";
             _redisConnection = ConnectionMultiplexer.Connect(redisEndpointString);
@@ -41,7 +41,7 @@ namespace RedisMonitor
                                                  .Where(e => e.AddressFamily != AddressFamily.Unspecified);
 
             var metricList = _config["metriclist"];
-            var timeStamp = DateTime.Now.ToString("s", CultureInfo.InvariantCulture);
+            var timeStamp = DateTime.UtcNow.ToString("s", CultureInfo.InvariantCulture);
 
             foreach (var endpoint in redisEndpoints)
             {
