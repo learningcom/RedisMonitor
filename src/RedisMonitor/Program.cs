@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net.Sockets;
 using Microsoft.Extensions.Configuration;
 using Nest;
 using StackExchange.Redis;
@@ -13,7 +14,7 @@ namespace RedisMonitor
         private static ConnectionMultiplexer _redisConnection;
         private static IConfigurationRoot _config;
         private static ElasticClient _elasticClient;
-        private static readonly string IndexName = string.Format("redis-monitor-{0}", DateTime.Now.ToString("yyyy.MM.dd"));
+        private static string _indexName; 
 
         public static void Main(string[] args)
         {
@@ -21,6 +22,8 @@ namespace RedisMonitor
                 .AddCommandLine(args)
                 .SetBasePath("./")
                 .Build();
+
+            _indexName = string.Format("redis-monitor-{0}", DateTime.Now.ToString("yyyy.MM.dd"));
 
             var redisEndpointString = _config["redisendpoints"] + ",allowAdmin=true";
             _redisConnection = ConnectionMultiplexer.Connect(redisEndpointString);
@@ -34,7 +37,9 @@ namespace RedisMonitor
 
         private static void GetInstanceMetrics()
         {
-            var redisEndpoints = _redisConnection.GetEndPoints();
+            var redisEndpoints = _redisConnection.GetEndPoints()
+                                                 .Where(e => e.AddressFamily != AddressFamily.Unspecified);
+
             var metricList = _config["metriclist"];
             var timeStamp = DateTime.Now.ToString("s", CultureInfo.InvariantCulture);
 
@@ -42,18 +47,20 @@ namespace RedisMonitor
             {
                 var server = _redisConnection.GetServer(endpoint);
                 var info = server.Info();
-                var metrics = info.SelectMany(groups => groups).Where(x => metricList.Contains(x.Key)).ToDictionary(g => g.Key, g => g.Value);
+                var metrics = info.SelectMany(groups => groups)
+                                  .Where(x => metricList.Contains(x.Key))
+                                  .ToDictionary(g => g.Key, g => g.Value);
 
                 metrics.Add("@timestamp", timeStamp);
                 metrics.Add("endpoint", ParseEndPoint(endpoint.ToString()));
                 CalculateHitRate(metrics);
                 ParseKeyspaceMetrics(metrics);
 
-                _elasticClient.Index(metrics, i => i.Index(IndexName));
+                _elasticClient.Index(metrics, i => i.Index(_indexName));
             }
         }
 
-        private static void CalculateHitRate(Dictionary<string, string> rawMetrics)
+        private static void CalculateHitRate(IDictionary<string, string> rawMetrics)
         {
             decimal hits = int.Parse(rawMetrics["keyspace_hits"]);
             decimal misses = int.Parse(rawMetrics["keyspace_misses"]);
@@ -61,7 +68,7 @@ namespace RedisMonitor
             rawMetrics.Add("hit_rate", hitRate.ToString(CultureInfo.InvariantCulture));
         }
 
-        private static void ParseKeyspaceMetrics(Dictionary<string, string> rawMetrics)
+        private static void ParseKeyspaceMetrics(IDictionary<string, string> rawMetrics)
         {
             var keySpaceString = rawMetrics["db0"];
 
@@ -104,7 +111,7 @@ namespace RedisMonitor
 
             clusterInfoDictionary.Add("clustername", _config["clustername"]);
             clusterInfoDictionary.Add("@timestamp", timeStamp);
-            _elasticClient.Index(clusterInfoDictionary, i => i.Index(IndexName));
+            _elasticClient.Index(clusterInfoDictionary, i => i.Index(_indexName));
         }
     }
 }
