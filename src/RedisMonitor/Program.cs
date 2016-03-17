@@ -56,6 +56,8 @@ namespace RedisMonitor
                 CalculateHitRate(metrics);
                 ParseKeyspaceMetrics(metrics);
 
+                Console.WriteLine("Writing metrics for endpoint {0}", endpoint);
+
                 _elasticClient.Index(metrics, i => i.Index(_indexName));
             }
         }
@@ -94,6 +96,7 @@ namespace RedisMonitor
             var clusterInfo = result.ToString().Split('\n');
             var clusterInfoDictionary = new Dictionary<string, string>();
             var timeStamp = DateTime.Now.ToString("s", CultureInfo.InvariantCulture);
+            var clusterName = _config["clustername"];
 
             foreach (var info in clusterInfo)
             {
@@ -109,8 +112,11 @@ namespace RedisMonitor
                 }
             }
 
-            clusterInfoDictionary.Add("clustername", _config["clustername"]);
+            clusterInfoDictionary.Add("clustername", clusterName);
             clusterInfoDictionary.Add("@timestamp", timeStamp);
+
+            Console.WriteLine("Writing metrics for cluster {0}", clusterName);
+
             _elasticClient.Index(clusterInfoDictionary, i => i.Index(_indexName));
         }
     }
