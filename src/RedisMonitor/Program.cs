@@ -66,22 +66,29 @@ namespace RedisMonitor
         {
             decimal hits = int.Parse(rawMetrics["keyspace_hits"]);
             decimal misses = int.Parse(rawMetrics["keyspace_misses"]);
-            decimal hitRate = hits/(hits + misses);
+            decimal hitRate = 0;
+
+            if(hits != 0)
+                hitRate =  hits/(hits + misses);
+
             rawMetrics.Add("hit_rate", hitRate.ToString(CultureInfo.InvariantCulture));
         }
 
         private static void ParseKeyspaceMetrics(IDictionary<string, string> rawMetrics)
         {
-            var keySpaceString = rawMetrics["db0"];
-
-            foreach (var keyspaceValue in keySpaceString.Split(','))
+            if (rawMetrics.ContainsKey("db0"))
             {
-                var key = "keyspace_" + keyspaceValue.Split('=')[0];
-                var value = keyspaceValue.Split('=')[1];
-                rawMetrics.Add(key, value);
-            }
+                var keySpaceString = rawMetrics["db0"];
 
-            rawMetrics.Remove("db0");
+                foreach (var keyspaceValue in keySpaceString.Split(','))
+                {
+                    var key = "keyspace_" + keyspaceValue.Split('=')[0];
+                    var value = keyspaceValue.Split('=')[1];
+                    rawMetrics.Add(key, value);
+                }
+
+                rawMetrics.Remove("db0");
+            }
         }
 
         private static string ParseEndPoint(string rawEndpoint)
@@ -95,7 +102,7 @@ namespace RedisMonitor
             var result = _redisConnection.GetDatabase().ScriptEvaluate("return redis.call('cluster','info')");
             var clusterInfo = result.ToString().Split('\n');
             var clusterInfoDictionary = new Dictionary<string, string>();
-            var timeStamp = DateTime.Now.ToString("s", CultureInfo.InvariantCulture);
+            var timeStamp = DateTime.UtcNow.ToString("s", CultureInfo.InvariantCulture);
             var clusterName = _config["clustername"];
 
             foreach (var info in clusterInfo)

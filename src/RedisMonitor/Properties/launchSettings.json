@@ -2,7 +2,7 @@
   "profiles": {
     "RedisMonitor": {
       "commandName": "RedisMonitor",
-      "commandLineArgs": "--redisendpoints \"pdxdevcac001:6381,pdxdevcac001:6382,pdxdevcac002:6381,pdxdevcac002:6382,pdxdevcac003:6381,pdxdevcac003:6382\" --clustername \"cache\""
+      "commandLineArgs": "--redisendpoints \"LCMPRDPLACAC001.lcloud.local:6379,LCMPRDPLACAC001.lcloud.local:6380,LCMPRDPLACAC002.lcloud.local:6379,LCMPRDPLACAC002.lcloud.local:6380,LCMPRDPLACAC003.lcloud.local:6379,LCMPRDPLACAC003.lcloud.local:6380\" --clustername \"persist\""
     }
   }
 }
