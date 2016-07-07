@@ -2,27 +2,30 @@
   "version": "1.0.0-*",
   "description": "RedisMonitor Console Application",
   "authors": [ "tmooney" ],
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
 
-  "compilationOptions": {
+  "buildOptions": {
     "emitEntryPoint": true
   },
-
   "dependencies": {
-    "Microsoft.Extensions.Configuration.CommandLine": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
-    "NEST": "2.0.4",
-    "StackExchange.Redis": "1.1.572-alpha"
+    "Microsoft.Extensions.Configuration.CommandLine": "1.0.0",
+    "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0",
+    "NEST": "2.4.1",
+    "StackExchange.Redis": "1.1.604-alpha"
   },
-
   "commands": {
     "RedisMonitor": "RedisMonitor"
   },
-
   "frameworks": {
-    "dnx451": { }
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
+        }
+      }
+    },
+    "net46": {},
+    "net452": {} 
   }
 }

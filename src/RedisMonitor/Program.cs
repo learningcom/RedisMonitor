@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +21,7 @@ namespace RedisMonitor
         {
             _config = new ConfigurationBuilder().AddJsonFile("appsettings.json")
                 .AddCommandLine(args)
-                .SetBasePath("./")
+                .SetBasePath(Path.GetFullPath("./"))
                 .Build();
 
             _indexName = string.Format("redis-monitor-{0}", DateTime.UtcNow.ToString("yyyy.MM.dd"));
