@@ -11,9 +11,10 @@ namespace RedisMonitor
 {
     public class MetricService
     {
+        private const string IndexStem = "redis-monitor-";
         private readonly IConnectionMultiplexer _redisConnection;
         private readonly IElasticClient _elasticClient;
-        private readonly string _indexName = $"redis-monitor-{DateTime.UtcNow.ToString("yyyy.MM.dd")}";
+        private readonly string _indexName = $"{IndexStem}{DateTime.UtcNow.ToString("yyyy.MM.dd")}";
 
         public MetricService(IConnectionMultiplexer redisConnection, IElasticClient elasticClient)
         {
@@ -27,6 +28,8 @@ namespace RedisMonitor
                                                  .Where(e => e.AddressFamily != AddressFamily.Unspecified);
 
             var timeStamp = DateTime.UtcNow.ToString("s", CultureInfo.InvariantCulture);
+
+            CreateTemplate();
 
             foreach (var endpoint in redisEndpoints)
             {
@@ -80,6 +83,20 @@ namespace RedisMonitor
         {
             var index = rawEndpoint.IndexOf(":", StringComparison.Ordinal);
             return rawEndpoint.Substring(0, index);
+        }
+
+        private void CreateTemplate()
+        {
+            if (!_elasticClient.IndexTemplateExists(new IndexTemplateExistsRequest("redis")).Exists)
+            {
+                var request = new PutIndexTemplateRequest("redis")
+                {
+                    Template = $"{IndexStem}*",
+                    Mappings = new Mappings(new Dictionary<TypeName, ITypeMapping> { { "_default_", new TypeMapping { NumericDetection = true } } })
+                };
+
+                _elasticClient.PutIndexTemplate(request);
+            }
         }
     }
 }
