@@ -29,9 +29,18 @@ namespace RedisMonitor
 
             var redisEndpointString = _config["redisendpoints"] + ",allowAdmin=true";
             _redisConnection = ConnectionMultiplexer.Connect(redisEndpointString);
-            
+            IConnectionPool connectionPool;
+
             var elasticSearchUri = new Uri(_config["elasticsearchurl"]);
-            var connectionPool = new SniffingConnectionPool(new [] {elasticSearchUri});
+            if (elasticSearchUri.GetType() == typeof(string[]))
+            {
+                connectionPool = new SniffingConnectionPool(new[] {elasticSearchUri});
+            }
+            else
+            {
+                connectionPool = new SingleNodeConnectionPool(elasticSearchUri);
+            }
+            
             var settings = new ConnectionSettings(connectionPool);
             _elasticClient = new ElasticClient(settings);
 
