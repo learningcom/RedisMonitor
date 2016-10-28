@@ -52,8 +52,8 @@ namespace RedisMonitor
 
         private static void CalculateHitRate(IDictionary<string, string> rawMetrics)
         {
-            decimal hits = int.Parse(rawMetrics["keyspace_hits"]);
-            decimal misses = int.Parse(rawMetrics["keyspace_misses"]);
+            decimal hits = long.Parse(rawMetrics["keyspace_hits"]);
+            decimal misses = long.Parse(rawMetrics["keyspace_misses"]);
             decimal hitRate = 0;
 
             if (hits != 0)
