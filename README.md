@@ -4,7 +4,7 @@ RedisMonitor is a cross platform application written with .NET core that reads R
 
 Prequsites
 ==========
-* .NET core runtime [instructions for installtion here](https://www.microsoft.com/net/core).
+* .NET core runtime [instructions for installation here](https://www.microsoft.com/net/core).
 
 Running RedisMonitor
 =====================
@@ -12,9 +12,9 @@ Running RedisMonitor
 Configuration
 -------------
 Redis Monitor can be configured using either an appsettings.json file in the directory that you are running RedisMonitor from, command line parameters, or a combination thereof.  There are four required parameters that must be set.
-`--elasticsearchurl` is the endpoint for ElasticSearch
-`--metriclist` is the list of metrics(from the Redis INFO command) to retrieve and write to ElasticSearch.
-`--redisendpoints` is a comma seperated list of Redis endpoints to query for info, including port.
+`--elasticsearchurl` is the endpoint for ElasticSearch  
+`--metriclist` is the list of metrics(from the Redis INFO command) to retrieve and write to ElasticSearch.  
+`--redisendpoints` is a comma seperated list of Redis endpoints to query for info, including port.  
 `--clustername` the name of your cluster
 
 ### Sample appsettings.json file
@@ -25,6 +25,6 @@ Redis Monitor can be configured using either an appsettings.json file in the dir
 	  "clustername": "cache"
 	}
 
-To Run RedisMonitor with command line parameters
-`dotnet /path/to/RedisMonitor.dll -- "--redisendpoints \"pdxdevcac001:6379,pdxdevcac001:6380,pdxdevcac002:6379,pdxdevcac002:6380,pdxdevcac003:6379,pdxdevcac003:6380\""
+To Run RedisMonitor with command line parameters  
+`dotnet /path/to/RedisMonitor.dll -- "--redisendpoints \"pdxdevcac001:6379,pdxdevcac001:6380,pdxdevcac002:6379,pdxdevcac002:6380,pdxdevcac003:6379,pdxdevcac003:6380\""`
 
