@@ -11,7 +11,7 @@
     "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
     "Microsoft.Extensions.Configuration.Json": "1.0.0",
     "NEST": "2.4.1",
-    "StackExchange.Redis": "1.1.604-alpha"
+    "StackExchange.Redis": "1.1.608"
   },
   "commands": {
     "RedisMonitor": "RedisMonitor"
