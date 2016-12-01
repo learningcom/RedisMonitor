@@ -11,7 +11,8 @@ Running RedisMonitor
 
 Configuration
 -------------
-Redis Monitor can be configured using either an appsettings.json file in the directory that you are running RedisMonitor from, command line parameters, or a combination thereof.  There are four required parameters that must be set.
+### Redis Monitor can be configured using either an appsettings.json file in the directory that you are running RedisMonitor from, command line parameters, or a combination thereof.  There are four required parameters that must be set.  
+
 `--elasticsearchurl` is the endpoint for ElasticSearch  
 `--metriclist` is the list of metrics(from the Redis INFO command) to retrieve and write to ElasticSearch.  
 `--redisendpoints` is a comma seperated list of Redis endpoints to query for info, including port.  
